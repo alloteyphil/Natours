@@ -6,7 +6,7 @@ Created with Node.js, Express.js, Mongodb, Mongoose in Jonas Schmedtmann's cours
 
 You can do the following actions on the Natours website:
 
-- log in and signup with email
+- log in and sign up with email
 - upload your photo
 - update passwords and emails
 - book a tour with stripe(fake transaction)
@@ -14,8 +14,7 @@ You can do the following actions on the Natours website:
 
 I added following additional features to the project:
 
-- Signup
-- More faetuires coming soon....
-
+- Sign up
+- More features coming soon....
 
 Made with love by Philip.
