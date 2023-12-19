@@ -1,5 +1,4 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { async } = require('regenerator-runtime');
 const Tour = require('../models/tourModel');
 const Booking = require('../models/bookingModel');
 const User = require('../models/userModel');
@@ -45,7 +44,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
   // create session as response
   res.status(200).json({
-    status: 'sucess',
+    status: 'success',
     session,
   });
 });

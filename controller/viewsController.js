@@ -10,7 +10,7 @@ exports.alerts = (req, res, next) => {
     // The res.locals property is an object that contains response local variables scoped to the request and because of this, it is only available to the view(s) rendered during that request/response cycle (if any)
     // check base.pug template
     res.locals.alert =
-      "Booking successful! Check email for confimation. If booking doesn't show up immediately, come back later.";
+      "Booking successful! Check email for confirmation. If booking doesn't show up immediately, come back later.";
   next();
 };
 
