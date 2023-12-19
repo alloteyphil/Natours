@@ -76,6 +76,7 @@ if (process.env.NODE_ENV === 'development') {
 // allow 100 requests from a fixed IP per hour
 // crashing or saving will reset the limit
 const limiter = rateLimit({
+  validate: { trustProxy: false },
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'too many requests from this IP, try again in an hour',
