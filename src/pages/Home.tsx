@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Pagination from "../components/Pagination";
+import OptimizedImage from "../components/OptimizedImage";
 const featuredTours = [
   {
     id: "forest-hiker",
@@ -112,12 +113,10 @@ const Home = () => {
           </div>
         </div>
         <div className="relative overflow-hidden rounded-2xl bg-emerald-50 dark:bg-slate-800">
-          <img
+          <OptimizedImage
             src="/img/tours/tour-7-cover.jpg"
             alt="Featured tour"
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
+            priority
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-emerald-950/60 via-transparent to-transparent" />
@@ -152,11 +151,9 @@ const Home = () => {
               className="group overflow-hidden rounded-2xl border border-emerald-200/70 bg-white shadow-[0_18px_50px_-42px_rgba(16,185,129,0.45)] transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-[0_22px_60px_-36px_rgba(16,185,129,0.55)] dark:border-emerald-500/20 dark:bg-slate-900/60 dark:hover:border-emerald-500/40"
             >
               <div className="relative aspect-video overflow-hidden bg-emerald-50 dark:bg-slate-800">
-                <img
+                <OptimizedImage
                   src={tour.imageCover}
                   alt={tour.name}
-                  loading="lazy"
-                  decoding="async"
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />
                 {tour.ratingsAverage && tour.ratingsAverage > 0 && (

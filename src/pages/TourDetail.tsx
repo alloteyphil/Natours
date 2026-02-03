@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import CheckoutButton from "../features/bookings/CheckoutButton";
+import OptimizedImage from "../components/OptimizedImage";
 
 const TourDetail = () => {
   const { slug } = useParams();
@@ -65,12 +66,10 @@ const TourDetail = () => {
     <div className="space-y-8">
       <div className="relative overflow-hidden rounded-3xl border border-emerald-200/70 bg-white dark:border-emerald-500/20 dark:bg-slate-900/60">
         <div className="relative aspect-video bg-slate-100 dark:bg-slate-800">
-          <img
+          <OptimizedImage
             src={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
             alt={tour.name}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
+            priority
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-950/40 via-transparent to-transparent" />
@@ -212,11 +211,9 @@ const TourDetail = () => {
                     key={image}
                     className="aspect-4/3 overflow-hidden rounded-2xl border border-emerald-200/70 bg-slate-100 dark:border-emerald-500/20 dark:bg-slate-800"
                   >
-                    <img
+                    <OptimizedImage
                       src={image}
                       alt={`${tour.name} gallery`}
-                      loading="lazy"
-                      decoding="async"
                       className="h-full w-full object-cover"
                     />
                   </div>

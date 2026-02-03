@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import Pagination from "../components/Pagination";
+import OptimizedImage from "../components/OptimizedImage";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "rating" | "duration";
 type DifficultyFilter = "all" | "easy" | "medium" | "difficult";
@@ -315,11 +316,9 @@ const Tours = () => {
                 className="group overflow-hidden rounded-2xl border border-emerald-200/70 bg-white shadow-[0_18px_50px_-42px_rgba(16,185,129,0.45)] transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-[0_22px_60px_-36px_rgba(16,185,129,0.55)] dark:border-emerald-500/20 dark:bg-slate-900/60 dark:hover:border-emerald-500/40"
               >
                 <div className="relative aspect-video overflow-hidden bg-emerald-50 dark:bg-slate-800">
-                  <img
+                  <OptimizedImage
                     src={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
                     alt={tour.name}
-                    loading="lazy"
-                    decoding="async"
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />
                   {tour.ratingsAverage > 0 && (

@@ -5,3 +5,4 @@ dev-data/
 .DS_Store
 config.env
 .env.local
+.vercel

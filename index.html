@@ -4,7 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
-    <link rel="preload" as="image" href="/img/tours/tour-7-cover.jpg" />
+    <!-- Preload critical above-the-fold images -->
+    <link
+      rel="preload"
+      as="image"
+      href="/img/tours/tour-7-cover.jpg"
+      fetchpriority="high"
+    />
+    <link rel="preload" as="image" href="/img/tours/tour-1-cover.jpg" />
+    <link rel="preload" as="image" href="/img/tours/tour-2-cover.jpg" />
+    <link rel="preload" as="image" href="/img/logo-green.png" />
     <title>Natours</title>
   </head>
   <body>
