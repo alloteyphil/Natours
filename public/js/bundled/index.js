@@ -221,7 +221,7 @@ function getHostname() {
 function getPort() {
     return HMR_PORT || location.port;
 }
-// eslint-disable-next-line no-redeclare
+ 
 var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== "undefined") {
     var hostname = getHostname();
@@ -700,8 +700,8 @@ var check = function(it) {
 };
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports = // eslint-disable-next-line es/no-global-this -- safe
-check(typeof globalThis == "object" && globalThis) || check(typeof window == "object" && window) || // eslint-disable-next-line no-restricted-globals -- safe
-check(typeof self == "object" && self) || check(typeof global == "object" && global) || check(typeof this == "object" && this) || // eslint-disable-next-line no-new-func -- fallback
+check(typeof globalThis == "object" && globalThis) || check(typeof window == "object" && window) ||  
+check(typeof self == "object" && self) || check(typeof global == "object" && global) || check(typeof this == "object" && this) ||  
 function() {
     return this;
 }() || Function("return this")();
@@ -793,7 +793,7 @@ var makeBuiltIn = module.exports = function(value, name, options) {
     return value;
 };
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-// eslint-disable-next-line no-extend-native -- required
+ 
 Function.prototype.toString = makeBuiltIn(function toString() {
     return isCallable(this) && getInternalState(this).source || inspectSource(this);
 }, "toString");
@@ -816,7 +816,7 @@ var fails = require("2642aa7619056f20");
 module.exports = !fails(function() {
     // eslint-disable-next-line es/no-function-prototype-bind -- safe
     var test = (function() {}).bind();
-    // eslint-disable-next-line no-prototype-builtins -- safe
+     
     return typeof test != "function" || test.hasOwnProperty("prototype");
 });
 
@@ -1562,7 +1562,7 @@ for(NAME in BigIntArrayConstructorsList){
 }
 // WebKit bug - typed arrays constructors prototype is Object.prototype
 if (!NATIVE_ARRAY_BUFFER_VIEWS || !isCallable(TypedArray) || TypedArray === Function.prototype) {
-    // eslint-disable-next-line no-shadow -- safe
+     
     TypedArray = function TypedArray() {
         throw new TypeError("Incorrect invocation");
     };
@@ -1711,7 +1711,7 @@ module.exports = !fails(function() {
 
 },{"85ffc28af2e8afc1":"hixon"}],"coYhs":[function(require,module,exports) {
 "use strict";
-/* eslint-disable no-proto -- safe */ var uncurryThisAccessor = require("995a94425a563d6");
+  var uncurryThisAccessor = require("995a94425a563d6");
 var anObject = require("4b49e5767d221547");
 var aPossiblePrototype = require("6e2c833ee2a62cf6");
 // `Object.setPrototypeOf` method
@@ -1783,7 +1783,7 @@ var trunc = require("3403cba02b5f61d8");
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
 module.exports = function(argument) {
     var number = +argument;
-    // eslint-disable-next-line no-self-compare -- NaN check
+     
     return number !== number || number === 0 ? 0 : trunc(number);
 };
 
@@ -1948,7 +1948,7 @@ var split = uncurryThis("".split);
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 module.exports = fails(function() {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-    // eslint-disable-next-line no-prototype-builtins -- safe
+     
     return !$Object("z").propertyIsEnumerable(0);
 }) ? function(it) {
     return classof(it) === "String" ? split(it, "") : $Object(it);
@@ -2029,10 +2029,10 @@ var createMethod = function(IS_INCLUDES) {
         var index = toAbsoluteIndex(fromIndex, length);
         var value;
         // Array#includes uses SameValueZero equality algorithm
-        // eslint-disable-next-line no-self-compare -- NaN check
+         
         if (IS_INCLUDES && el !== el) while(length > index){
             value = O[index++];
-            // eslint-disable-next-line no-self-compare -- NaN check
+             
             if (value !== value) return true;
         // Array#indexOf ignores holes, Array#includes - not
         }

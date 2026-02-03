@@ -1,4 +1,0 @@
-[[redirects]]
-from = "/*"
-to="/base.pug"
-status = 200
