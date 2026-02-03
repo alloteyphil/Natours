@@ -70,6 +70,7 @@ const TourDetail = () => {
             alt={tour.name}
             loading="eager"
             decoding="async"
+            fetchPriority="high"
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-950/40 via-transparent to-transparent" />

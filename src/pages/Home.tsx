@@ -115,6 +115,9 @@ const Home = () => {
           <img
             src="/img/tours/tour-7-cover.jpg"
             alt="Featured tour"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-emerald-950/60 via-transparent to-transparent" />
