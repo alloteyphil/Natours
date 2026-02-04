@@ -45,27 +45,27 @@ const AccountContent = () => {
   if (!account) {
     return (
       <div className="space-y-8">
-        <section className="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:p-6">
-          <div className="h-14 w-14 animate-pulse rounded-full bg-emerald-100" />
+        <section className="flex flex-col gap-4 rounded-2xl border border-emerald-200/70 bg-white p-4 shadow-sm dark:border-emerald-500/20 dark:bg-slate-900/60 sm:flex-row sm:items-center sm:p-6">
+          <div className="h-14 w-14 animate-pulse rounded-full bg-emerald-100 dark:bg-emerald-500/20" />
           <div className="flex-1 space-y-2">
-            <div className="h-6 w-40 animate-pulse rounded-full bg-slate-200" />
-            <div className="h-4 w-52 animate-pulse rounded-full bg-slate-100" />
+            <div className="h-6 w-40 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
+            <div className="h-4 w-52 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
           </div>
-          <div className="h-10 w-24 animate-pulse rounded-full bg-slate-100" />
+          <div className="h-10 w-24 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
         </section>
         <section className="space-y-4">
-          <div className="h-6 w-32 animate-pulse rounded-full bg-slate-200" />
+          <div className="h-6 w-32 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={`booking-skeleton-${index}`}
-                className="flex flex-col gap-3 rounded-2xl border border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 rounded-2xl border border-emerald-200/70 bg-white px-4 py-3 dark:border-emerald-500/20 dark:bg-slate-900/60 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="space-y-2">
-                  <div className="h-4 w-40 animate-pulse rounded-full bg-slate-200" />
-                  <div className="h-3 w-32 animate-pulse rounded-full bg-slate-100" />
+                  <div className="h-4 w-40 animate-pulse rounded-full bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-3 w-32 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
                 </div>
-                <div className="h-4 w-20 animate-pulse rounded-full bg-emerald-100" />
+                <div className="h-4 w-20 animate-pulse rounded-full bg-emerald-100 dark:bg-emerald-500/20" />
               </div>
             ))}
           </div>
