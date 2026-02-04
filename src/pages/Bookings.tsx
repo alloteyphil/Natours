@@ -1,9 +1,19 @@
-import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Link, useSearch } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { useToast } from "../hooks/useToast";
 
 const Bookings = () => {
   const bookings = useQuery(api.bookings.getUserBookings);
+  const { showToast } = useToast();
+  const search = useSearch({ from: "/bookings" });
+
+  useEffect(() => {
+    if (search.checkout === "success") {
+      showToast("Payment successful! Your booking has been confirmed.", "success");
+    }
+  }, [search.checkout, showToast]);
 
   if (bookings === undefined) {
     return (

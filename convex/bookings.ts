@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { authComponent } from "./auth";
 import { getAuthUserId, getUserByAuthId } from "./rbac";
 
-export const createPendingBooking = mutation({
+export const createBooking = mutation({
   args: {
     tourId: v.id("tours"),
     userId: v.id("users"),
@@ -12,11 +12,12 @@ export const createPendingBooking = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
+    // Only create booking if payment was successful (called from webhook)
     return ctx.db.insert("bookings", {
       tourId: args.tourId,
       userId: args.userId,
       price: args.price,
-      paid: false,
+      paid: true, // Always true since this is only called after successful payment
       stripeSessionId: args.stripeSessionId,
       createdAt: now,
       updatedAt: now,
@@ -24,26 +25,12 @@ export const createPendingBooking = mutation({
   },
 });
 
-export const markPaid = mutation({
-  args: {
-    stripeSessionId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const booking = await ctx.db
-      .query("bookings")
-      .withIndex("by_stripe_session", (q) =>
-        q.eq("stripeSessionId", args.stripeSessionId)
-      )
-      .unique();
-
-    if (!booking) {
-      return;
-    }
-
-    await ctx.db.patch(booking._id, {
-      paid: true,
-      updatedAt: Date.now(),
-    });
+export const deleteAllBookings = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const bookings = await ctx.db.query("bookings").collect();
+    await Promise.all(bookings.map((booking) => ctx.db.delete(booking._id)));
+    return { deleted: bookings.length };
   },
 });
 
@@ -126,5 +113,19 @@ export const getUserBookings = query({
     } catch {
       return [];
     }
+  },
+});
+
+export const getByStripeSession = query({
+  args: {
+    stripeSessionId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("bookings")
+      .withIndex("by_stripe_session", (q) =>
+        q.eq("stripeSessionId", args.stripeSessionId)
+      )
+      .unique();
   },
 });

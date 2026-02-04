@@ -9,6 +9,7 @@ import Account from "./pages/Account";
 import Wishlist from "./pages/Wishlist";
 import Bookings from "./pages/Bookings";
 import Compare from "./pages/Compare";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import NotFound from "./pages/NotFound";
 
 const rootRoute = createRootRoute({
@@ -61,12 +62,28 @@ const bookingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/bookings",
   component: Bookings,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      checkout: (search.checkout as string) || undefined,
+    };
+  },
 });
 
 const compareRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/compare",
   component: Compare,
+});
+
+const checkoutSuccessRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/checkout-success",
+  component: CheckoutSuccess,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      session_id: (search.session_id as string) || undefined,
+    };
+  },
 });
 
 const notFoundRoute = createRoute({
@@ -85,6 +102,7 @@ const routeTree = rootRoute.addChildren([
   wishlistRoute,
   bookingsRoute,
   compareRoute,
+  checkoutSuccessRoute,
   notFoundRoute,
 ]);
 
