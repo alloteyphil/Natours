@@ -7,3 +7,4 @@ dev-data/
 config.env
 .env.local
 .vercel
+.cursor
