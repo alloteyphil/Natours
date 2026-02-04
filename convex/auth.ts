@@ -36,6 +36,10 @@ export const { getAuthUser } = authComponent.clientApi();
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return authComponent.getAuthUser(ctx);
+    try {
+      return await authComponent.getAuthUser(ctx);
+    } catch {
+      return null;
+    }
   },
 });

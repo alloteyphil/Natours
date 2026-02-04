@@ -7,13 +7,21 @@ import {
   requireRole,
   type UserRole,
 } from "./rbac";
+import { authComponent } from "./auth";
 
 export const getMe = query({
   args: {},
   handler: async (ctx) => {
-    const authUser = await getAuthUserOrThrow(ctx);
-    const user = await getUserByAuthId(ctx, getAuthUserId(authUser));
-    return { authUser, user };
+    try {
+      const authUser = await authComponent.getAuthUser(ctx);
+      if (!authUser) {
+        return null;
+      }
+      const user = await getUserByAuthId(ctx, getAuthUserId(authUser));
+      return { authUser, user };
+    } catch {
+      return null;
+    }
   },
 });
 

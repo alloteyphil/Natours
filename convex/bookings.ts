@@ -1,5 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { authComponent } from "./auth";
+import { getAuthUserId, getUserByAuthId } from "./rbac";
 
 export const createPendingBooking = mutation({
   args: {
@@ -82,5 +84,47 @@ export const listForUserDetailed = query({
       ...booking,
       tour: tours[index],
     }));
+  },
+});
+
+export const getUserBookings = query({
+  args: {},
+  handler: async (ctx) => {
+    try {
+      const authUser = await authComponent.getAuthUser(ctx);
+      if (!authUser) return [];
+
+      const user = await getUserByAuthId(ctx, getAuthUserId(authUser));
+      if (!user) return [];
+
+      const bookings = await ctx.db
+        .query("bookings")
+        .withIndex("by_user", (q) => q.eq("userId", user._id))
+        .order("desc")
+        .collect();
+
+      // Get tour details for each booking
+      const bookingsWithTours = await Promise.all(
+        bookings.map(async (booking) => {
+          const tour = await ctx.db.get(booking.tourId);
+          return {
+            ...booking,
+            tour: tour
+              ? {
+                  name: tour.name,
+                  slug: tour.slug,
+                  imageCover: tour.imageCover,
+                  duration: tour.duration,
+                  difficulty: tour.difficulty,
+                }
+              : null,
+          };
+        })
+      );
+
+      return bookingsWithTours;
+    } catch {
+      return [];
+    }
   },
 });

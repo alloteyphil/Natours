@@ -17,11 +17,12 @@
   "dependencies": {
     "@convex-dev/better-auth": "^0.10.10",
     "@stripe/stripe-js": "^8.7.0",
+    "@tanstack/react-router": "^1.158.0",
     "better-auth": "^1.4.9",
     "convex": "^1.31.7",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.0",
+    "react-router-dom": "^6.30.3",
     "stripe": "^20.3.0"
   },
   "devDependencies": {

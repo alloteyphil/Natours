@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as bookings from "../bookings.js";
 import type * as http from "../http.js";
 import type * as rbac from "../rbac.js";
+import type * as reviews from "../reviews.js";
 import type * as stripe from "../stripe.js";
 import type * as tours from "../tours.js";
 import type * as users from "../users.js";
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   bookings: typeof bookings;
   http: typeof http;
   rbac: typeof rbac;
+  reviews: typeof reviews;
   stripe: typeof stripe;
   tours: typeof tours;
   users: typeof users;

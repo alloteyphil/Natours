@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import Pagination from "../components/Pagination";
 import OptimizedImage from "../components/OptimizedImage";
+import WishlistButton from "../components/WishlistButton";
+import CompareButton from "../components/CompareButton";
 
 type SortOption = "default" | "price-asc" | "price-desc" | "rating" | "duration";
 type DifficultyFilter = "all" | "easy" | "medium" | "difficult";
@@ -310,87 +312,99 @@ const Tours = () => {
         <div className="space-y-6">
           <div className="grid gap-6 sm:grid-cols-2">
             {pagedTours.map((tour) => (
-              <Link
+              <div
                 key={tour._id}
-                to={`/tours/${tour.slug}`}
                 className="group overflow-hidden rounded-2xl border border-emerald-200/70 bg-white shadow-[0_18px_50px_-42px_rgba(16,185,129,0.45)] transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-[0_22px_60px_-36px_rgba(16,185,129,0.55)] dark:border-emerald-500/20 dark:bg-slate-900/60 dark:hover:border-emerald-500/40"
               >
-                <div className="relative aspect-video overflow-hidden bg-emerald-50 dark:bg-slate-800">
-                  <OptimizedImage
-                    src={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
-                    alt={tour.name}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
-                  {tour.ratingsAverage > 0 && (
-                    <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur dark:bg-slate-900/90 dark:text-white">
-                      <svg
-                        className="h-3 w-3 fill-yellow-400"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.564-.955L10 0l2.947 5.955 6.564.955-4.756 4.635 1.123 6.545z" />
-                      </svg>
-                      <span>{tour.ratingsAverage.toFixed(1)}</span>
-                      {tour.ratingsQuantity > 0 && (
-                        <span className="text-slate-500">
-                          ({tour.ratingsQuantity})
-                        </span>
-                      )}
+                <Link to={`/tours/${tour.slug}`} className="block">
+                  <div className="relative aspect-video overflow-hidden bg-emerald-50 dark:bg-slate-800">
+                    <OptimizedImage
+                      src={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
+                      alt={tour.name}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    {tour.ratingsAverage > 0 && (
+                      <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur dark:bg-slate-900/90 dark:text-white">
+                        <svg
+                          className="h-3 w-3 fill-yellow-400"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.564-.955L10 0l2.947 5.955 6.564.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                        <span>{tour.ratingsAverage.toFixed(1)}</span>
+                        {tour.ratingsQuantity > 0 && (
+                          <span className="text-slate-500">
+                            ({tour.ratingsQuantity})
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <div className="absolute left-3 top-3 flex gap-2" onClick={(e) => e.preventDefault()}>
+                      <WishlistButton
+                        tourId={tour._id}
+                        slug={tour.slug}
+                        name={tour.name}
+                        imageCover={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
+                        price={tour.price}
+                        size="sm"
+                      />
+                      <CompareButton tourId={tour._id} size="sm" />
                     </div>
-                  )}
-                </div>
-                <div className="space-y-3 p-5">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                        {tour.name}
-                      </h3>
-                      <span className="shrink-0 text-lg font-bold text-emerald-700 dark:text-emerald-300">
-                        ${tour.price}
+                  </div>
+                  <div className="space-y-3 p-5">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                          {tour.name}
+                        </h3>
+                        <span className="shrink-0 text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                          ${tour.price}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                        {tour.summary}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 border-t border-emerald-100 pt-3 text-xs text-slate-500 dark:border-emerald-500/20 dark:text-slate-400">
+                      <span className="flex items-center gap-1">
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        {tour.duration} days
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        Max {tour.maxGroupSize}
+                      </span>
+                      <span className="capitalize rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200">
+                        {tour.difficulty}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                      {tour.summary}
-                    </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3 border-t border-emerald-100 pt-3 text-xs text-slate-500 dark:border-emerald-500/20 dark:text-slate-400">
-                    <span className="flex items-center gap-1">
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {tour.duration} days
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      </svg>
-                      Max {tour.maxGroupSize}
-                    </span>
-                    <span className="capitalize rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200">
-                      {tour.difficulty}
-                    </span>
-                  </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
           <Pagination

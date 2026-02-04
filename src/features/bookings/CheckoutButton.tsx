@@ -9,12 +9,12 @@ type CheckoutButtonProps = {
 
 const CheckoutButton = ({ tourId }: CheckoutButtonProps) => {
   const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
-  const authUser = useQuery(api.auth.getAuthUser);
+  const account = useQuery(api.users.getMe);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleCheckout = async () => {
-    if (!authUser) {
+    if (!account?.authUser) {
       window.location.assign("/login");
       return;
     }
@@ -37,16 +37,18 @@ const CheckoutButton = ({ tourId }: CheckoutButtonProps) => {
     }
   };
 
+  const isCheckingAuth = account === undefined;
+
   return (
     <div className="space-y-2">
       <button
         type="button"
         onClick={handleCheckout}
-        disabled={isLoading || authUser === undefined}
-        className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={isLoading || isCheckingAuth}
+        className="w-full rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {authUser === undefined
-          ? "Checking account..."
+        {isCheckingAuth
+          ? "Loading..."
           : isLoading
             ? "Redirecting..."
             : "Book now"}

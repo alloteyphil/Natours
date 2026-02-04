@@ -1,12 +1,35 @@
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import CheckoutButton from "../features/bookings/CheckoutButton";
 import OptimizedImage from "../components/OptimizedImage";
+import WishlistButton from "../components/WishlistButton";
+import ShareButton from "../components/ShareButton";
+import ReviewsSection from "../components/ReviewsSection";
+import ImageLightbox from "../components/ImageLightbox";
+import TourRecommendations from "../components/TourRecommendations";
+import CompareButton from "../components/CompareButton";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 
 const TourDetail = () => {
-  const { slug } = useParams();
+  const { slug } = useParams({ from: "/tours/$slug" });
   const tour = useQuery(api.tours.getBySlug, slug ? { slug } : "skip");
+  const { addTour } = useRecentlyViewed();
+  const [lightboxImageIndex, setLightboxImageIndex] = useState<number | null>(null);
+
+  // Track recently viewed tour
+  useEffect(() => {
+    if (tour) {
+      addTour({
+        id: tour._id,
+        slug: tour.slug,
+        name: tour.name,
+        imageCover: tour.imageCover ?? "/img/tours/tour-1-cover.jpg",
+        price: tour.price,
+      });
+    }
+  }, [tour, addTour]);
 
   if (!tour && slug) {
     return (
@@ -61,11 +84,14 @@ const TourDetail = () => {
   const finalPrice = tour.priceDiscount
     ? tour.price - tour.priceDiscount
     : tour.price;
+  const images = tour.images ?? [];
+  const startDates = tour.startDates ?? [];
+  const locations = tour.locations ?? [];
 
   return (
     <div className="space-y-8">
-      <div className="relative overflow-hidden rounded-3xl border border-emerald-200/70 bg-white dark:border-emerald-500/20 dark:bg-slate-900/60">
-        <div className="relative aspect-video bg-slate-100 dark:bg-slate-800">
+      <div className="relative rounded-3xl border border-emerald-200/70 bg-white dark:border-emerald-500/20 dark:bg-slate-900/60">
+        <div className="relative aspect-video overflow-hidden rounded-t-3xl bg-slate-100 dark:bg-slate-800">
           <OptimizedImage
             src={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
             alt={tour.name}
@@ -77,24 +103,39 @@ const TourDetail = () => {
             <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 shadow-sm backdrop-blur dark:bg-slate-900/90 dark:text-emerald-200">
               {tour.difficulty}
             </span>
-            {tour.ratingsAverage > 0 && (
+            {(tour.ratingsAverage ?? 0) > 0 && (
               <span className="flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur dark:bg-slate-900/90 dark:text-white">
                 <svg className="h-3 w-3 fill-yellow-400" viewBox="0 0 20 20">
                   <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.564-.955L10 0l2.947 5.955 6.564.955-4.756 4.635 1.123 6.545z" />
                 </svg>
-                {tour.ratingsAverage.toFixed(1)} ({tour.ratingsQuantity})
+                {(tour.ratingsAverage ?? 0).toFixed(1)} ({tour.ratingsQuantity ?? 0})
               </span>
             )}
           </div>
         </div>
         <div className="space-y-4 p-6 sm:p-8">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
-              {tour.name}
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
-              {tour.summary}
-            </p>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+                  {tour.name}
+                </h1>
+                <p className="mt-2 text-lg text-slate-600 dark:text-slate-300">
+                  {tour.summary}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShareButton tourName={tour.name} tourSlug={tour.slug} />
+                <CompareButton tourId={tour._id} />
+                <WishlistButton
+                  tourId={tour._id}
+                  slug={tour.slug}
+                  name={tour.name}
+                  imageCover={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
+                  price={tour.price}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
             <span className="flex items-center gap-2">
@@ -136,7 +177,7 @@ const TourDetail = () => {
                 <div>
                   <p className="text-xs font-medium uppercase text-slate-500 dark:text-slate-400">Next date</p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {tour.startDates.length > 0 ? tour.startDates[0] : "TBA"}
+                    {startDates.length > 0 ? startDates[0] : "TBA"}
                   </p>
                 </div>
               </div>
@@ -162,7 +203,7 @@ const TourDetail = () => {
                   </p>
                 </div>
               </div>
-              {tour.ratingsAverage > 0 && (
+              {(tour.ratingsAverage ?? 0) > 0 && (
                 <div className="flex items-start gap-3">
                   <svg className="mt-0.5 h-5 w-5 shrink-0 fill-yellow-400 text-yellow-400" viewBox="0 0 20 20">
                     <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.564-.955L10 0l2.947 5.955 6.564.955-4.756 4.635 1.123 6.545z" />
@@ -170,7 +211,7 @@ const TourDetail = () => {
                   <div>
                     <p className="text-xs font-medium uppercase text-slate-500 dark:text-slate-400">Rating</p>
                     <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                      {tour.ratingsAverage.toFixed(1)} / 5 ({tour.ratingsQuantity} reviews)
+                      {(tour.ratingsAverage ?? 0).toFixed(1)} / 5 ({tour.ratingsQuantity ?? 0} reviews)
                     </p>
                   </div>
                 </div>
@@ -178,13 +219,13 @@ const TourDetail = () => {
             </div>
           </div>
 
-          {tour.startDates.length > 0 && (
+          {startDates.length > 0 && (
             <div className="rounded-2xl border border-emerald-200/70 bg-white p-6 shadow-sm dark:border-emerald-500/20 dark:bg-slate-900/60">
               <h2 className="mb-4 text-xl font-semibold text-slate-900 dark:text-white">
                 Available dates
               </h2>
               <div className="flex flex-wrap gap-2">
-                {tour.startDates.map((date, index) => (
+                {startDates.map((date, index) => (
                   <span
                     key={index}
                     className="rounded-full border border-emerald-200/70 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200"
@@ -200,23 +241,24 @@ const TourDetail = () => {
             </div>
           )}
 
-          {tour.images.length > 0 && (
+          {images.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Gallery
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {tour.images.map((image) => (
-                  <div
+                {images.map((image, index) => (
+                  <button
                     key={image}
-                    className="aspect-4/3 overflow-hidden rounded-2xl border border-emerald-200/70 bg-slate-100 dark:border-emerald-500/20 dark:bg-slate-800"
+                    onClick={() => setLightboxImageIndex(index)}
+                    className="aspect-4/3 overflow-hidden rounded-2xl border border-emerald-200/70 bg-slate-100 transition hover:scale-[1.02] dark:border-emerald-500/20 dark:bg-slate-800"
                   >
                     <OptimizedImage
                       src={image}
                       alt={`${tour.name} gallery`}
                       className="h-full w-full object-cover"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -231,13 +273,13 @@ const TourDetail = () => {
             </p>
           </div>
 
-          {tour.locations.length > 0 && (
+          {locations.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Tour locations
               </h2>
               <div className="space-y-3">
-                {tour.locations.map((location, index) => (
+                {locations.map((location, index) => (
                   <div
                     key={index}
                     className="flex items-start gap-3 rounded-xl border border-emerald-200/70 bg-white p-4 dark:border-emerald-500/20 dark:bg-slate-900/60"
@@ -264,32 +306,42 @@ const TourDetail = () => {
           )}
         </div>
 
-        <div className="lg:sticky lg:top-6 lg:h-fit">
+        <div className="lg:sticky lg:top-6 lg:z-40 lg:h-fit">
           <div className="rounded-2xl border border-emerald-200/70 bg-white p-6 shadow-lg dark:border-emerald-500/20 dark:bg-slate-900/60">
             <div className="space-y-4">
-              <div className="space-y-2 border-b border-emerald-100 pb-4 dark:border-emerald-500/20">
-                <div className="flex items-baseline gap-2">
-                  {tour.priceDiscount ? (
-                    <>
+              <div className="flex items-start justify-between border-b border-emerald-100 pb-4 dark:border-emerald-500/20">
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-baseline gap-2">
+                    {tour.priceDiscount ? (
+                      <>
+                        <span className="text-3xl font-bold text-slate-900 dark:text-white">
+                          ${finalPrice}
+                        </span>
+                        <span className="text-lg text-slate-500 line-through dark:text-slate-400">
+                          ${tour.price}
+                        </span>
+                        <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200">
+                          Save ${tour.priceDiscount}
+                        </span>
+                      </>
+                    ) : (
                       <span className="text-3xl font-bold text-slate-900 dark:text-white">
-                        ${finalPrice}
-                      </span>
-                      <span className="text-lg text-slate-500 line-through dark:text-slate-400">
                         ${tour.price}
                       </span>
-                      <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200">
-                        Save ${tour.priceDiscount}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-3xl font-bold text-slate-900 dark:text-white">
-                      ${tour.price}
-                    </span>
-                  )}
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    per person
+                  </p>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
-                  per person
-                </p>
+                <WishlistButton
+                  tourId={tour._id}
+                  slug={tour.slug}
+                  name={tour.name}
+                  imageCover={tour.imageCover ?? "/img/tours/tour-1-cover.jpg"}
+                  price={tour.price}
+                  size="sm"
+                />
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
@@ -322,6 +374,28 @@ const TourDetail = () => {
           </div>
         </div>
       </div>
+
+      <ReviewsSection tourId={tour._id} />
+
+      {lightboxImageIndex !== null && images.length > 0 && (
+        <ImageLightbox
+          images={images}
+          currentIndex={lightboxImageIndex}
+          onClose={() => setLightboxImageIndex(null)}
+          onNavigate={(index) => setLightboxImageIndex(index)}
+        />
+      )}
+
+      {tour && (
+        <TourRecommendations
+          currentTourId={tour._id}
+          currentTour={{
+            difficulty: tour.difficulty,
+            price: tour.price,
+            duration: tour.duration,
+          }}
+        />
+      )}
     </div>
   );
 };

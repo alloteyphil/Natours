@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
@@ -6,6 +7,7 @@ import { authClient } from "../lib/auth-client";
 import AuthGuard from "../components/AuthGuard";
 
 const AccountContent = () => {
+  const navigate = useNavigate();
   const account = useQuery(api.users.getMe);
   const ensureUser = useMutation(api.users.ensureUser);
   const updateProfile = useMutation(api.users.updateProfile);
@@ -22,6 +24,14 @@ const AccountContent = () => {
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  useEffect(() => {
+    // If account is explicitly null (not undefined), user is not authenticated
+    if (account === null) {
+      navigate({ to: "/login" });
+      return;
+    }
+  }, [account, navigate]);
 
   useEffect(() => {
     if (account?.authUser && !account.user) {
@@ -42,7 +52,9 @@ const AccountContent = () => {
     account?.user ? { userId: account.user._id } : "skip"
   );
 
-  if (!account) {
+  // Show loading skeleton only when account is undefined (still loading)
+  // If account is null, redirect happens in useEffect
+  if (account === undefined) {
     return (
       <div className="space-y-8">
         <section className="flex flex-col gap-4 rounded-2xl border border-emerald-200/70 bg-white p-4 shadow-sm dark:border-emerald-500/20 dark:bg-slate-900/60 sm:flex-row sm:items-center sm:p-6">
@@ -74,8 +86,13 @@ const AccountContent = () => {
     );
   }
 
+  // If account is null, show nothing (redirect is happening)
+  if (account === null) {
+    return null;
+  }
+
   const handleProfileSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.SyntheticEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setIsSavingProfile(true);
@@ -126,7 +143,7 @@ const AccountContent = () => {
   };
 
   const handlePasswordSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.SyntheticEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setPasswordMessage(null);

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import Pagination from "../components/Pagination";
 import OptimizedImage from "../components/OptimizedImage";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 const featuredTours = [
   {
     id: "forest-hiker",
@@ -86,6 +87,10 @@ const Home = () => {
   const perPage = 4;
   const totalPages = Math.max(1, Math.ceil(displayTours.length / perPage));
   const pagedTours = displayTours.slice((page - 1) * perPage, page * perPage);
+  const { recentlyViewed } = useRecentlyViewed();
+
+  // Show recently viewed tours (we already have the data we need)
+  const recentlyViewedWithData = recentlyViewed.slice(0, 4);
   return (
     <div className="space-y-10 sm:space-y-12">
       <section className="grid gap-8 rounded-3xl border border-emerald-200/70 bg-white p-6 shadow-[0_24px_80px_-60px_rgba(16,185,129,0.5)] dark:border-emerald-500/20 dark:bg-slate-900/60 sm:p-8 md:grid-cols-[1.2fr_0.8fr]">
@@ -210,6 +215,46 @@ const Home = () => {
           onPageChange={setPage}
         />
       </section>
+
+      {recentlyViewedWithData.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white sm:text-2xl">
+                Recently viewed
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                Continue exploring tours you've checked out.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewedWithData.map((item) => (
+              <Link
+                key={item.id}
+                to={`/tours/${item.slug}`}
+                className="group overflow-hidden rounded-2xl border border-emerald-200/70 bg-white shadow-[0_18px_50px_-42px_rgba(16,185,129,0.45)] transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-[0_22px_60px_-36px_rgba(16,185,129,0.55)] dark:border-emerald-500/20 dark:bg-slate-900/60 dark:hover:border-emerald-500/40"
+              >
+                <div className="relative aspect-video overflow-hidden bg-emerald-50 dark:bg-slate-800">
+                  <OptimizedImage
+                    src={item.imageCover}
+                    alt={item.name}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="space-y-2 p-4">
+                  <h3 className="font-semibold text-slate-900 dark:text-white">
+                    {item.name}
+                  </h3>
+                  <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                    ${item.price}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

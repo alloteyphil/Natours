@@ -1,28 +1,15 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { authClient } from "../lib/auth-client";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    const checkTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    };
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -37,9 +24,20 @@ const Login = () => {
         setIsLoading(false);
         return;
       }
-      window.location.assign("/account");
+      // Small delay to allow auth state to propagate
+      setTimeout(() => {
+        navigate({ to: "/account", replace: true });
+      }, 200);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Unable to log in";
+      console.error("Login error:", err);
+      let message = "Unable to log in";
+      if (err instanceof Error) {
+        message = err.message;
+        // Check for network errors
+        if (err.message.includes("NetworkError") || err.message.includes("Failed to fetch")) {
+          message = "Network error. Please check your connection and ensure the Convex site URL is configured correctly.";
+        }
+      }
       setError(message);
       setIsLoading(false);
     }

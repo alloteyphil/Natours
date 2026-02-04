@@ -4,10 +4,28 @@ import { v } from "convex/values";
 export const list = query({
   args: {
     limit: v.optional(v.number()),
+    search: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const limit = args.limit ?? 20;
-    return ctx.db.query("tours").withIndex("by_price").order("asc").take(limit);
+    let tours = await ctx.db
+      .query("tours")
+      .withIndex("by_price")
+      .order("asc")
+      .take(limit);
+
+    // Filter by search term if provided
+    if (args.search) {
+      const searchLower = args.search.toLowerCase();
+      tours = tours.filter(
+        (tour) =>
+          tour.name.toLowerCase().includes(searchLower) ||
+          tour.summary.toLowerCase().includes(searchLower) ||
+          tour.description.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return tours;
   },
 });
 
